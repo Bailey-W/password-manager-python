@@ -1,6 +1,7 @@
 # Custom added ignores
 *.db
 *.key
+*.log
 
 
 # Byte-compiled / optimized / DLL files
