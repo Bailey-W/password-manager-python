@@ -1,12 +1,13 @@
+import logger
+logger.log_event(f'Started process', __name__)
 import sqlite3
 import os
-import logger
 
 def setup_db(connection):
-    logger.log_event("Setting up database for first run")
+    logger.log_event("Setting up database for first run", __name__)
     cur = connection.cursor()
     cur.execute("CREATE TABLE entries(username, url, password)")
-    logger.log_event("Database setup complete")
+    logger.log_event("Database setup complete", __name__)
 
 # Connects to the SQLite database. Creates the database if it does not exist.
 # Returns: a database connection object
@@ -15,9 +16,9 @@ def connect_to_db():
     
     is_new_db = not os.path.isfile(db_location)
 
-    logger.log_event("Connecting to database")
+    logger.log_event("Connecting to database", __name__)
     con = sqlite3.connect(db_location)
-    logger.log_event("Successfully connected to database")
+    logger.log_event("Successfully connected to database", __name__)
 
     if is_new_db:
         setup_db(con)
@@ -37,4 +38,11 @@ def get_encrypted_passwords(username: str, url: str) -> list:
 def find_entries_containing(query: str) -> list:
     pass
 
-connect_to_db()
+def insert_new_entry(username, encrpyted_password, url, connection):
+    cur = connection.cursor()
+    params = (username, encrpyted_password, url)
+    cur.execute('INSERT INTO entries (username, url, password) VALUES (?, ?, ?)', params)
+    connection.commit()
+    logger.log_event(f'Inserted "{username}" into database', __name__)
+
+con = connect_to_db()

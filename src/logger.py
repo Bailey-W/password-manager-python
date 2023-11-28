@@ -18,9 +18,12 @@ def create_log_file():
     log_file.close()
     log_event("Created log file")
 
-def log_event(event: str):
+def log_event(event: str, progenitor=None):
     log_file = open(log_file_path, 'a')
-    log_file.write(get_current_time_formatted() + ": " + event + '\n')
+    progenitor_string = ""
+    if progenitor:
+        progenitor_string = progenitor + ": "
+    log_file.write(f'{get_current_time_formatted()}: {progenitor_string}{event}\n')
     log_file.close()
 
 create_log_file()
