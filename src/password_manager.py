@@ -1,10 +1,14 @@
 import logger
 logger.log_event("Started process", __name__)
 import db_manager
+import keygen
 # Adds a new entry to the database
 # Expects: username, as string used to login to the site
 #          password, the plaintext version of the password
 #          url, the url of the site
+
+master_key = b''
+
 def add_entry(username: str, password: str, url: str):
     encrypted_password = encrypt(password)
     logger.log_event('Adding new entry', __name__)
@@ -32,3 +36,13 @@ def encrypt(plaintext: str) -> str:
 def decrypt(ciphertext: str) -> str:
     logger.log_event('Decrypting...', __name__)
     return ciphertext
+
+def login(password: str) -> bool:
+    logger.log_event('Attempting login...', __name__)
+    correct = keygen.verify_password(password)
+    if not correct:
+        logger.log_event('Login failed', __name__)
+        return False
+    logger.log_event('Login successful')
+    master_key = keygen.generate_key_from_password(password)
+    return True

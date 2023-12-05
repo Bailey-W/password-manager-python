@@ -3,4 +3,8 @@ logger.log_event('Started process', __name__)
 import db_manager
 import password_manager
 
-password_manager.add_entry("New User", "password", "www.spotify.com")
+success = False
+while not success:
+    password = input("Enter your password: ")
+    success = password_manager.login(password)
+    print(success)
