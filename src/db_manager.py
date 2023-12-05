@@ -39,12 +39,6 @@ def get_encrypted_passwords(username: str, url: str) -> list:
     cur.execute('SELECT * FROM entries WHERE username=? AND url=?', (username, url))
     return cur.fetchall()
 
-# Finds entries which contain the query string
-# Expects: query, the string to search for
-# Returns: A list of all entries containing the query in either username or url fields
-def find_entries_containing(query: str) -> list:
-    pass
-
 def insert_new_entry(username, encrpyted_password, url):
     global con
     cur = con.cursor()
