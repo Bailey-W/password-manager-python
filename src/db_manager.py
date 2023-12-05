@@ -1,18 +1,22 @@
 import logger
-logger.log_event(f'Started process', __name__)
+logger.log_event('Started process', __name__)
 import sqlite3
 import os
 
-def setup_db(connection):
+con = None
+
+def setup_db():
+    global con
     logger.log_event("Setting up database for first run", __name__)
-    cur = connection.cursor()
+    cur = con.cursor()
     cur.execute("CREATE TABLE entries(username, url, password)")
     logger.log_event("Database setup complete", __name__)
 
 # Connects to the SQLite database. Creates the database if it does not exist.
 # Returns: a database connection object
 def connect_to_db():
-    db_location = os.path.dirname(os.path.abspath(__file__)) + "/../data/data.db"
+    global con
+    db_location = os.path.dirname(os.path.abspath(__file__)) + "/../data/wimerDB.db"
     
     is_new_db = not os.path.isfile(db_location)
 
@@ -21,7 +25,7 @@ def connect_to_db():
     logger.log_event("Successfully connected to database", __name__)
 
     if is_new_db:
-        setup_db(con)
+        setup_db()
 
     return con
 
@@ -38,11 +42,12 @@ def get_encrypted_passwords(username: str, url: str) -> list:
 def find_entries_containing(query: str) -> list:
     pass
 
-def insert_new_entry(username, encrpyted_password, url, connection):
-    cur = connection.cursor()
+def insert_new_entry(username, encrpyted_password, url):
+    global con
+    cur = con.cursor()
     params = (username, encrpyted_password, url)
     cur.execute('INSERT INTO entries (username, url, password) VALUES (?, ?, ?)', params)
-    connection.commit()
+    con.commit()
     logger.log_event(f'Inserted "{username}" into database', __name__)
 
-con = connect_to_db()
+connect_to_db()
