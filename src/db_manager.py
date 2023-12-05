@@ -36,9 +36,6 @@ def connect_to_db():
 def get_encrypted_passwords(username: str, url: str) -> list:
     global con
     cur = con.cursor()
-    params = (username, url)
-    print(params)
-    # cur.execute('SELECT * FROM entries WHERE username = ? AND url = ?', params)
     cur.execute('SELECT * FROM entries WHERE username=? AND url=?', (username, url))
     return cur.fetchall()
 
