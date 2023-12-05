@@ -9,8 +9,10 @@ while not success:
     success = password_manager.login(password)
     print(success)
 
-message = input('Enter a message: ')
-enc = password_manager.encrypt(message)
-print(enc)
-dec = password_manager.decrypt(enc)
-print(dec)
+print(password_manager.generate_password())
+
+# message = input('Enter a message: ')
+# enc = password_manager.encrypt(message)
+# print(enc)
+# dec = password_manager.decrypt(enc)
+# print(dec)

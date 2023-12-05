@@ -5,13 +5,14 @@ import keygen
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.primitives.padding import PKCS7
 import os
+import secrets
+
+master_key = b''
+
 # Adds a new entry to the database
 # Expects: username, as string used to login to the site
 #          password, the plaintext version of the password
 #          url, the url of the site
-
-master_key = b''
-
 def add_entry(username: str, password: str, url: str):
     encrypted_password = encrypt(password)
     logger.log_event('Adding new entry', __name__)
@@ -49,7 +50,9 @@ def gen_or_get_initial_vector():
 # Generates a strong password
 # Returns: the auto-generated password
 def generate_password() -> str:
-    pass
+    logger.log_event('Generating random password', __name__)
+    password_length = 16
+    return secrets.token_urlsafe(password_length)
 
 # Encrpyts a plaintext string using the generated AES Key
 def encrypt(plaintext: str):
@@ -59,10 +62,12 @@ def encrypt(plaintext: str):
         logger.log_event('Error: Not logged in', __name__)
         return None
     
+    logger.log_event('Padding password', __name__)
     padder = PKCS7(256).padder()
     padded = padder.update(plaintext)
     padded += padder.finalize()
 
+    logger.log_event('Encrypting Passowrd', __name__)
     cipher = Cipher(algorithms.AES(master_key), modes.CBC(gen_or_get_initial_vector()))
     encryptor = cipher.encryptor()
     return encryptor.update(padded) + encryptor.finalize()
@@ -74,10 +79,12 @@ def decrypt(ciphertext) -> str:
         logger.log_event('Error: Not logged in', __name__)
         return None
     
+    logger.log_event('Decrypting password', __name__)
     cipher = Cipher(algorithms.AES(master_key), modes.CBC(gen_or_get_initial_vector()))
     decryptor = cipher.decryptor()
     text = decryptor.update(ciphertext) + decryptor.finalize()
 
+    logger.log_event('Unpadding password', __name__)
     unpadder = PKCS7(256).unpadder()
     unpadded = unpadder.update(text)
     unpadded += unpadder.finalize()
