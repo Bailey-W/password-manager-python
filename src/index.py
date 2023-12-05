@@ -15,6 +15,15 @@ while not success:
         exit()
     success = password_manager.login(master)
 
+result = ['']
+
+while result[0] != 'EXIT':
+    result = gui.show_main_window([['http://www.youtube.com', 'Bailey'], ['http://www.gmail.com', 'Alice'], ['http://www.twitch.tv', 'Bailey']])
+    if result[0] == 'ADD':
+        data = gui.show_add_entry()
+        print(data)
+    if result[0] == 'SHOW':
+        gui.show_password(result[1], result[2], 'TEMP')
 
 # success = False
 # while not success:
