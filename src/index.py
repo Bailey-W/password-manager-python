@@ -9,10 +9,10 @@ while not success:
     success = password_manager.login(password)
     print(success)
 
-print(password_manager.generate_password())
+username = input('Enter username: ')
+password = input('Enter password: ')
+url = 'http://google.com'
 
-# message = input('Enter a message: ')
-# enc = password_manager.encrypt(message)
-# print(enc)
-# dec = password_manager.decrypt(enc)
-# print(dec)
+password_manager.add_entry(username, password, url)
+
+print(db_manager.get_encrypted_passwords(username, url))

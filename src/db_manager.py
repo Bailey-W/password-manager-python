@@ -34,7 +34,13 @@ def connect_to_db():
 #          url, the url to find
 # Returns: A list of encrypted passwords which match both the username and url
 def get_encrypted_passwords(username: str, url: str) -> list:
-    pass
+    global con
+    cur = con.cursor()
+    params = (username, url)
+    print(params)
+    # cur.execute('SELECT * FROM entries WHERE username = ? AND url = ?', params)
+    cur.execute('SELECT * FROM entries WHERE username=? AND url=?', (username, url))
+    return cur.fetchall()
 
 # Finds entries which contain the query string
 # Expects: query, the string to search for
@@ -45,7 +51,7 @@ def find_entries_containing(query: str) -> list:
 def insert_new_entry(username, encrpyted_password, url):
     global con
     cur = con.cursor()
-    params = (username, encrpyted_password, url)
+    params = (username, url, encrpyted_password)
     cur.execute('INSERT INTO entries (username, url, password) VALUES (?, ?, ?)', params)
     con.commit()
     logger.log_event(f'Inserted "{username}" into database', __name__)
