@@ -23,8 +23,22 @@ def add_entry(username: str, password: str, url: str):
 #          url, the url of the site
 # Returns: True if the entry was successfully added, False if there was an error
 def add_entry_with_generated_password(username: str, url: str) -> bool:
+    logger.log_event('Adding new entry with random password', __name__)
     password = generate_password()
     return add_entry(username, password, url)
+
+
+def get_password_for_entry(username: str, url: str) -> str:
+    logger.log_event(f'Looking for password, user: {username}, site: {url}', __name__)
+    data = db_manager.get_encrypted_passwords(username, url)
+    if not data:
+        logger.log_event('Password not found...', __name__)
+        return None
+    logger.log_event('Password found', __name__)
+    password = data[0][2]
+    password = decrypt(password)
+
+    return password
 
 
 def gen_or_get_initial_vector():

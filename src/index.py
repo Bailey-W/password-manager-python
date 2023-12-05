@@ -10,9 +10,9 @@ while not success:
     print(success)
 
 username = input('Enter username: ')
-password = input('Enter password: ')
+# password = input('Enter password: ')
 url = 'http://google.com'
 
-password_manager.add_entry(username, password, url)
+# password_manager.add_entry(username, password, url)
 
-print(db_manager.get_encrypted_passwords(username, url))
+print(password_manager.get_password_for_entry(username, url))
