@@ -47,4 +47,10 @@ def insert_new_entry(username, encrpyted_password, url):
     con.commit()
     logger.log_event(f'Inserted "{username}" into database', __name__)
 
+def get_all_entries():
+    global con
+    cur = con.cursor()
+    cur.execute('SELECT url, username FROM entries')
+    return cur.fetchall()
+
 connect_to_db()

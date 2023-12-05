@@ -2,6 +2,7 @@ import logger
 logger.log_event("Started process", __name__)
 
 import PySimpleGUI as sg
+import pyperclip
 
 sg.theme('Topanga')
 
@@ -30,11 +31,12 @@ def show_main_window(entries):
     logger.log_event('Showing main screen', __name__)
 
     layout = [
-                [sg.Text("Hello! Here are your entries:"), sg.Button('+')],
+                [sg.Text("Hello! Here are your entries:", size=(70, None)), sg.Button('+')],
+                [sg.Text('Website', size=(25,None)), sg.Text('Username', size=(25,None)), sg.Text('Password', size=(15,None)), sg.Text('Show')],
              ]
     
     for entry in entries:
-        layout.append([sg.Text(entry[0]), sg.Text(entry[1]), sg.Text('*****'), sg.Button('Show', key=f'Show_{entry[0]}_{entry[1]}')])
+        layout.append([sg.Text(entry[0], size=(25,None)), sg.Text(entry[1], size=(25,None)), sg.Text('*****', size=(15,None)), sg.Button('Show', key=f'Show_{entry[0]}_{entry[1]}')])
 
     window = sg.Window('Password Manager', layout)
 
@@ -58,7 +60,7 @@ def show_add_entry(incorrect = False):
                 [],
                 [sg.Text('Site: '), sg.InputText('', key='Site')],
                 [sg.Text('Username: '), sg.InputText('', key='Username')],
-                [sg.Text('Password: '), sg.InputText('', key='Password', password_char='*')],      
+                [sg.Text('Password: '), sg.InputText('', key='Password', password_char='*'), sg.Checkbox("Generate", key='Generate')],      
                 [sg.Submit(), sg.Cancel()]]
     
     if incorrect:
@@ -72,17 +74,31 @@ def show_add_entry(incorrect = False):
     if event == sg.WIN_CLOSED or event == 'Cancel':
         return None
     
-    if(not values['Username'] or not values['Site'] or not values['Password']):
+    if not values['Password'] and not values['Generate']:
+        return show_add_entry(True)
+
+    if(not values['Username'] or not values['Site']):
         return show_add_entry(True)
     
-    return (values['Username'], values['Site'], values['Password'])
+    password = values['Password'] if not values['Generate'] else None
 
-def show_password(url, username, password):
+    return (values['Username'], values['Site'], password)
+
+def show_password(url, username, password, copied=False):
     logger.log_event(f'Showing {url}:{username} password', __name__)
 
-    layout = [  [sg.Text(url), sg.Text(username), sg.Text(password), sg.Button('Copy')], ]
+    layout = [ [],
+               [sg.Text(url), sg.Text(username), sg.Text(password), sg.Button('Copy')], 
+               [sg.CloseButton('Close')]]
+    
+    if copied:
+        layout[0].append(sg.Text('Password copied to clipboard', text_color='green'))
 
     window = sg.Window('View Password', layout)
 
     event, values = window.read()
     window.close()
+
+    if event == 'Copy':
+        pyperclip.copy(password)
+        show_password(url, username, password, True)

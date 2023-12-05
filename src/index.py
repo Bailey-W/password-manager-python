@@ -18,12 +18,16 @@ while not success:
 result = ['']
 
 while result[0] != 'EXIT':
-    result = gui.show_main_window([['http://www.youtube.com', 'Bailey'], ['http://www.gmail.com', 'Alice'], ['http://www.twitch.tv', 'Bailey']])
+    result = gui.show_main_window(db_manager.get_all_entries())
     if result[0] == 'ADD':
         data = gui.show_add_entry()
-        print(data)
+        if not data[2]:
+            password_manager.add_entry_with_generated_password(data[0], data[1])
+        else:
+            password_manager.add_entry(data[0], data[2], data[1])
     if result[0] == 'SHOW':
-        gui.show_password(result[1], result[2], 'TEMP')
+        password = password_manager.get_password_for_entry(result[2], result[1])
+        gui.show_password(result[1], result[2], password)
 
 # success = False
 # while not success:
