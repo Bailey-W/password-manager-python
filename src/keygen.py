@@ -39,7 +39,7 @@ def generate_key_from_password(password):
     
 
 def verify_password(password):
-    password = bytes(password, encoding='UTF-8')
+    password = bytes(password, encoding='utf-8')
     logger.log_event('Verifying password...', __name__)
     verification_location = os.path.dirname(os.path.abspath(__file__)) + "/../keys/verify.key"
 
