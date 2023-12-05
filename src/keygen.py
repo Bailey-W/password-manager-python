@@ -64,6 +64,11 @@ def verify_password(password):
         return False
 
 
+def check_master_exists():
+    verification_location = os.path.dirname(os.path.abspath(__file__)) + "/../keys/verify.key"
+    return os.path.isfile(verification_location)
+
+
 if __name__ == "__main__":
     password = input("Enter a password: ")
     key = generate_key_from_password(password)
